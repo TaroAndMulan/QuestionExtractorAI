@@ -1,9 +1,9 @@
 import cv2
-from helper import getFileLocation
+from helper import getFileLocation, getFileLocationRel
 from imutils import contours
 import os
 # Load image, grayscale, Gaussian blur, Otsu's threshold
-dir_path,file_path = getFileLocation()
+file_path,save_path = getFileLocationRel()
 image = cv2.imread(file_path)
 original = image.copy()
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -15,8 +15,8 @@ open_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
 opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, open_kernel, iterations=1)
 
 # Create rectangular structuring element and dilate
-kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9,9))
-dilate = cv2.dilate(opening, kernel, iterations=4)
+kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9,18))
+dilate = cv2.dilate(opening, kernel, iterations=5)
 
 # Find contours, sort from top to bottom, and extract each question
 cnts = cv2.findContours(dilate, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -28,12 +28,11 @@ question_number = 0
 for c in cnts:
     # Filter by area to ensure its not noise
     area = cv2.contourArea(c)
-    print (area)
-    if area > 150:
+    if area > 4000:
         x,y,w,h = cv2.boundingRect(c)
-        cv2.rectangle(image, (x, y), (x + w, y + h), (36,255,12), 2)
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0,255,0), 5)
         question = original[y:y+h, x:x+w]
-        save_path = os.path.join(dir_path, 'question_{}.png'.format(question_number))
+        save_path = os.path.join(save_path, 'question_{}.png'.format(question_number))
         cv2.imwrite(save_path, question)
         question_number += 1
 

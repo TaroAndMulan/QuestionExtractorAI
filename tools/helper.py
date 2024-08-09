@@ -40,7 +40,7 @@ def getFileLocationRel():
         help="The path to the file"
     )
     args = parser.parse_args()
-    print (args.file_path)
+    #print (args.file_path)
     save_path  = os.path.dirname(args.file_path)
     if os.path.exists(args.file_path):
         print(f"The file '{args.file_path}' exists.")

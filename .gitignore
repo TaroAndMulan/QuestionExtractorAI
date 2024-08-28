@@ -1,1 +1,3 @@
-/tools/testing/*
+/tools/testing/**/output
+/tools/dummy.py
+
